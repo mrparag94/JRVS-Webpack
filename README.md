@@ -1,5 +1,5 @@
 # JRVS-Webpack
-JQuery, React, Vue 3 and Svelte all in one Webpack config
+JQuery, React, Vue 3 and Svelte all in one Webpack Boilerplate
 
 ## Features
 - JQuery 3.5.1
