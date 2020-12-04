@@ -24,7 +24,12 @@ const config = {
             {
                 test: /\.css$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: ''
+                        }
+                    },
                     {
                         loader: 'css-loader',
                         options: {
@@ -128,6 +133,14 @@ const config = {
                         loader: 'html-loader'
                     }
                 ]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf|svg)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'Assets/fonts',
+                }
             }
         ]
     },
@@ -145,7 +158,11 @@ const config = {
         }),
         new MiniCssExtractPlugin(),
         new CleanWebpackPlugin(),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
     ],
     resolve: {
         extensions: [
@@ -170,7 +187,7 @@ const config = {
             }
         }
     },
-    devtool: 'source-map',
+    devtool: 'cheap-module-source-map',
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         hot: true,
