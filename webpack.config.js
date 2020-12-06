@@ -4,12 +4,17 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 
 const config = {
     mode: 'development',
-    entry: './src/index.js',
+    entry: [
+        './src/index.js',
+        './src/index.css',
+    ],
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].[contenthash].js'
@@ -58,9 +63,31 @@ const config = {
             {
                 test: /\.scss$/,
                 use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'sass-loader'
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            url: false,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: [
+                                    ['autoprefixer'],
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: require('sass'),
+                        }
+                    }
                 ]
             },
             {
@@ -139,15 +166,22 @@ const config = {
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]',
-                    outputPath: 'Assets/fonts',
+                    outputPath: 'assets/fonts',
                 }
             }
         ]
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [{ from: 'src/index.html' }],
-        }),
+        new CopyPlugin(
+            {
+                patterns: [
+                    {
+                        from: 'src/*.html',
+                        to: '[name].[ext]',
+                    }
+                ]
+            }
+        ),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './src/index.html'
@@ -156,7 +190,9 @@ const config = {
             analyzerMode: 'static',
             openAnalyzer: false,
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'index.css'
+        }),
         new CleanWebpackPlugin(),
         new VueLoaderPlugin(),
         new webpack.ProvidePlugin({
@@ -176,6 +212,20 @@ const config = {
         ]
     },
     optimization: {
+        minimizer: [
+            new TerserPlugin(),
+            new OptimizeCSSAssetsPlugin(),
+            new CopyPlugin(
+                {
+                    patterns: [
+                        {
+                            from: 'src/*.html',
+                            to: '[name].[ext]',
+                        }
+                    ]
+                }
+            )
+        ],
         runtimeChunk: 'single',
         splitChunks: {
             cacheGroups: {
@@ -192,6 +242,7 @@ const config = {
         contentBase: path.join(__dirname, 'dist'),
         hot: true,
         compress: true,
+        open: true,
         port: 5678
     }
 };
