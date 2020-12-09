@@ -13,11 +13,12 @@ const config = {
     mode: 'development',
     entry: [
         './src/index.js',
-        './src/index.css',
+        // './src/index.css',
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[contenthash].js'
+        filename: '[name].[contenthash].js',
+        publicPath: '/'
     },
     module: {
         rules: [
@@ -209,7 +210,10 @@ const config = {
             '.mjs',
             '.svelte',
             '.vue'
-        ]
+        ],
+        alias: {
+            stream: 'stream-browserify'
+        }
     },
     optimization: {
         minimizer: [
@@ -239,10 +243,11 @@ const config = {
     },
     devtool: 'cheap-module-source-map',
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        contentBase: path.join(__dirname, 'src'),
         hot: true,
         compress: true,
         open: true,
+        historyApiFallback: true,
         port: 5678
     }
 };
