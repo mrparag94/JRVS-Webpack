@@ -25,7 +25,7 @@ JQuery, React, Vue 3 and Svelte all in one Webpack Boilerplate
 ### Usage
 Install dependencies
 ```
-$ npm install
+$ npm install --legacy-peer-deps
 ```
 Run development server
 ```
