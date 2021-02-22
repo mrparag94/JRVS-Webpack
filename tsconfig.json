@@ -1,18 +1,40 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist/",
-        "sourceMap": true,
-        "strict": true,
-        "noImplicitReturns": true,
-        "noImplicitAny": true,
-        "module": "es6",
-        "moduleResolution": "node",
-        "target": "es5",
-        "allowJs": true,
-        "allowSyntheticDefaultImports": true,
-        "jsx": "react"
-    },
-    "include": [
-        "./src/**/*"
-    ]
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true,
+    "jsx": "react", // For React Application Only
+  },
+  "include": [
+    "./src/**/*"
+  ]
 }
+
+
+//{
+//  "compilerOptions": {
+//    "target": "ESNext",
+//    "module": "ESNext",
+//    "strict": true,
+//    "jsx": "preserve",
+//    "importHelpers": true,
+//    "moduleResolution": "node",
+//    "esModuleInterop": true,
+//    "allowSyntheticDefaultImports": true,
+//    "sourceMap": true,
+//    "baseUrl": ".",
+//    "types": ["webpack-env"],
+//    "paths": {
+//      "@/*": ["src/*"]
+//    },
+//    "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"]
+//  },
+//  "include": ["./src/**/*", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*", "tests/**/*.ts", "tests/**/*.tsx"],
+//  "exclude": ["node_modules", "dist"]
+//}

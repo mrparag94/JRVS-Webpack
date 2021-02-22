@@ -1,6 +1,6 @@
-import './index.css';
+import './index.scss';
 
 // import './JQuery/index';
-// import './React/index';
+import './React/index';
 // import './Vue/index';
-import './Svelte/index';
+// import './Svelte/index';

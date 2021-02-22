@@ -1,35 +1,28 @@
 const webpack = require('webpack');
 const path = require('path');
+const { VueLoaderPlugin } = require('vue-loader');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { VueLoaderPlugin } = require('vue-loader');
 
 const config = {
-    mode: 'development',
     entry: [
-        './src/index.js',
-        // './src/index.css',
+        // 'react-hot-loader/patch', // For React Application Only
+        './src/index.js'
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[contenthash].js',
-        publicPath: '/'
+        filename: '[name].[contenthash].js' // Code Splitting Feature
     },
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
-                use: 'babel-loader',
-                exclude: /node_modules/
-            },
-            {
                 test: /\.css$/,
                 use: [
+                    'vue-style-loader',
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
@@ -49,6 +42,7 @@ const config = {
             {
                 test: /\.css$/,
                 use: [
+                    'vue-style-loader',
                     MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
@@ -64,6 +58,7 @@ const config = {
             {
                 test: /\.scss$/,
                 use: [
+                    'vue-style-loader',
                     {
                         loader: MiniCssExtractPlugin.loader,
                     },
@@ -94,6 +89,7 @@ const config = {
             {
                 test: /\.less$/,
                 use: [
+                    'vue-style-loader',
                     {
                         loader: MiniCssExtractPlugin.loader,
                     },
@@ -113,10 +109,27 @@ const config = {
             {
                 test: /\.styl$/,
                 use: [
+                    'vue-style-loader',
                     MiniCssExtractPlugin.loader,
                     'css-loader',
                     'stylus-loader'
                 ]
+            },
+            {
+                test: /\.(js|jsx)$/,
+                use: 'babel-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.svelte$/,
+                loader: 'svelte-loader',
+                options: {
+                    preprocess:  require('svelte-preprocess')({ postcss: true })
+                }
             },
             {
                 test: /\.ts(x)?$/,
@@ -128,21 +141,14 @@ const config = {
                     ]
                 }
             },
-            // {
-            //     test: /\.svg$/,
-            //     use: 'file-loader'
-            // },
-            // {
-            //     test: /\.png$/,
-            //     use: [
-            //         {
-            //             loader: 'url-loader',
-            //             options: {
-            //                 mimetype: 'image/png'
-            //             }
-            //         }
-            //     ]
-            // },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'assets/fonts',
+                }
+            },
             {
                 test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
                 loader: 'file-loader',
@@ -158,65 +164,9 @@ const config = {
                     name: '[name].[ext]',
                     outputPath: 'assets/videos',
                 }
-            },
-            {
-                test: /\.svelte$/,
-                loader: 'svelte-loader',
-                options: {
-                    preprocess:  require('svelte-preprocess')({ postcss: true })
-                }
-            },
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
-            {
-                test: /\.html$/,
-                use: [
-                    {
-                        loader: 'html-loader'
-                    }
-                ]
-            },
-            {
-                test: /\.(woff|woff2|eot|ttf|otf)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]',
-                    outputPath: 'assets/fonts',
-                }
             }
         ]
     },
-    plugins: [
-        new CopyPlugin(
-            {
-                patterns: [
-                    {
-                        from: 'src/*.html',
-                        to: '[name].[ext]',
-                    }
-                ]
-            }
-        ),
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: './src/index.html'
-        }),
-        new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            openAnalyzer: false,
-        }),
-        new MiniCssExtractPlugin({
-            filename: 'index.css'
-        }),
-        new CleanWebpackPlugin(),
-        new VueLoaderPlugin(),
-        new webpack.ProvidePlugin({
-            $: 'jquery',
-            jQuery: 'jquery'
-        })
-    ],
     resolve: {
         extensions: [
             '.js',
@@ -228,24 +178,39 @@ const config = {
             '.vue'
         ],
         alias: {
+            // 'react-dom': '@hot-loader/react-dom', // For React Application Only
             stream: 'stream-browserify'
         }
     },
+    plugins: [
+        new VueLoaderPlugin(),
+        // new CopyPlugin({ // For Non React Projects
+        //     patterns: [{
+        //         from: 'src/*.html',
+        //         to: '[name].[ext]',
+        //     }]
+        // }),
+        // new CopyPlugin({
+        //     patterns: [{ from: 'src/index.html' }],
+        // }),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: './src/index.html'
+        }),
+        new LodashModuleReplacementPlugin,
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+        }),
+        new MiniCssExtractPlugin(),
+        new CleanWebpackPlugin(),
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
+    ],
     optimization: {
-        minimizer: [
-            new TerserPlugin(),
-            new OptimizeCSSAssetsPlugin(),
-            new CopyPlugin(
-                {
-                    patterns: [
-                        {
-                            from: 'src/*.html',
-                            to: '[name].[ext]',
-                        }
-                    ]
-                }
-            )
-        ],
         runtimeChunk: 'single',
         splitChunks: {
             cacheGroups: {
@@ -257,15 +222,14 @@ const config = {
             }
         }
     },
-    devtool: 'cheap-module-source-map',
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        hot: true,
-        compress: true,
-        open: false,
-        historyApiFallback: true,
-        port: 5678
-    }
-};
+        contentBase: './dist'
+    },
+}
 
-module.exports = config;
+module.exports = (env, argv) => {
+    if (argv.hot) {
+        config.output.filename = '[name].[hash].js';
+    }
+    return config;
+};
