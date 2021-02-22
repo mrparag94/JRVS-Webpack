@@ -9,7 +9,10 @@
     "moduleResolution": "node",
     "target": "es5",
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react", // For React Application Only
+    "importHelpers": true,
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*"
@@ -19,15 +22,7 @@
 
 //{
 //  "compilerOptions": {
-//    "target": "ESNext",
-//    "module": "ESNext",
-//    "strict": true,
 //    "jsx": "preserve",
-//    "importHelpers": true,
-//    "moduleResolution": "node",
-//    "esModuleInterop": true,
-//    "allowSyntheticDefaultImports": true,
-//    "sourceMap": true,
 //    "baseUrl": ".",
 //    "types": ["webpack-env"],
 //    "paths": {
