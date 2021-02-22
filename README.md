@@ -23,6 +23,11 @@ JQuery, React, Vue 3 and Svelte all in one Webpack Boilerplate
 - Code splitting
 
 ### Usage
+Update dependencies
+```
+$ npx ncu
+$ npx ncu -u
+```
 Install dependencies
 ```
 $ npm install --legacy-peer-deps
